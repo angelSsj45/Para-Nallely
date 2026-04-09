@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Carta para ti</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: #f5e9d4;
+        font-family: 'Georgia', serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* SOBRE */
+    .envelope {
+        width: 420px;
+        height: 300px;
+        background: #d4b08c;
+        position: relative;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        cursor: pointer;
+        transition: transform .4s;
+        z-index: 10;
+    }
+
+    .envelope:hover {
+        transform: scale(1.03);
+    }
+
+    /* TAPA DEL SOBRE */
+    .envelope::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 50%;
+        background: #c49a78;
+        clip-path: polygon(0 0, 100% 0, 50% 100%);
+        border-radius: 12px 12px 0 0;
+    }
+
+    /* SELLO DE CERA */
+    .seal {
+        width: 70px;
+        height: 70px;
+        background: url('https://i.imgur.com/8b1QF1E.png');
+        background-size: cover;
+        position: absolute;
+        top: 110px;
+        left: 50%;
+        transform: translateX(-50%) scale(1);
+        animation: pulse 2s infinite ease-in-out;
+        z-index: 20;
+        pointer-events: none;
+    }
+
+    @keyframes pulse {
+        0% { transform: translateX(-50%) scale(1); }
+        50% { transform: translateX(-50%) scale(1.1); }
+        100% { transform: translateX(-50%) scale(1); }
+    }
+
+    /* CARTA */
+    .letter {
+        width: 360px;
+        height: 0;
+        background: url('https://i.imgur.com/8fK4h6B.jpg');
+        background-size: cover;
+        position: absolute;
+        top: 55%;
+        left: 50%;
+        transform: translate(-50%, -50%) scaleY(0);
+        transform-origin: top;
+        border-radius: 8px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        overflow: hidden;
+        transition: height 1s ease, transform 1s ease;
+        text-align: center;
+    }
+
+    .letter.open {
+        height: 420px;
+        transform: translate(-50%, -50%) scaleY(1);
+    }
+
+    h2 {
+        margin-top: 0;
+        font-size: 26px;
+        color: #8b4a3c;
+    }
+
+    p {
+        font-size: 18px;
+        color: #333;
+    }
+
+    .buttons {
+        margin-top: 25px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    button {
+        padding: 12px 25px;
+        border: none;
+        background: #8b4a3c;
+        color: white;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    button:hover {
+        background: #6e3a2f;
+    }
+
+    .no {
+        background: #555;
+    }
+
+    .no:hover {
+        background: #333;
+    }
+
+    /* PÉTALOS */
+    .petal {
+        position: fixed;
+        top: -10px;
+        width: 20px;
+        height: 20px;
+        background-image: url('https://i.imgur.com/3aXQF1D.png');
+        background-size: cover;
+        opacity: 0.9;
+        animation: caer 4s linear infinite;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    @keyframes caer {
+        0% { transform: translateY(0) rotate(0deg); }
+        100% { transform: translateY(110vh) rotate(360deg); }
+    }
+</style>
+</head>
+<body>
+
+<!-- MÚSICA DE PIANO -->
+<audio id="musica" autoplay loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7f3c9e2b4a.mp3?filename=romantic-piano-110397.mp3" type="audio/mpeg">
+</audio>
+
+<div class="envelope" onclick="abrirCarta()">
+    <div class="seal"></div>
+
+    <div class="letter" id="carta">
+        <h2>Para Nallely ❤️</h2>
+        <p>
+            (Aquí va tu mensaje actual.)
+        </p>
+
+        <div class="buttons">
+            <button onclick="aceptar()">Aceptar</button>
+            <button class="no" onclick="noAceptar()">No acepto</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let lluviaActiva = false;
+let intervaloPetalos;
+
+function abrirCarta() {
+    document.getElementById("carta").classList.add("open");
+
+    // quitar sello al abrir
+    document.querySelector(".seal").style.display = "none";
+
+    if (!lluviaActiva) {
+        lluviaActiva = true;
+        iniciarLluvia();
+    }
+}
+
+function iniciarLluvia() {
+    intervaloPetalos = setInterval(() => {
+        crearPetalo();
+    }, 300);
+}
+
+function crearPetalo() {
+    const petalo = document.createElement("div");
+    petalo.classList.add("petal");
+    petalo.style.left = Math.random() * 100 + "vw";
+    petalo.style.animationDuration = (3 + Math.random() * 2) + "s";
+    document.body.appendChild(petalo);
+
+    setTimeout(() => {
+        petalo.remove();
+    }, 5000);
+}
+
+function aceptar() {
+    alert("Gracias por aceptar ❤️");
+    cerrarLluvia();
+}
+
+function noAceptar() {
+    alert("Está bien… pero me rompiste el corazón 💔");
+    cerrarLluvia();
+}
+
+function cerrarLluvia() {
+    clearInterval(intervaloPetalos);
+    lluviaActiva = false;
+}
+</script>
+
+</body>
+</html>
